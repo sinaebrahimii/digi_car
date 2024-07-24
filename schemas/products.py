@@ -6,4 +6,3 @@ class ProductRequest(BaseModel):
     price:int
     stock_quantity:int
     category_id:int|None=None
-    isbn:str

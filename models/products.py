@@ -1,10 +1,5 @@
 from sqlalchemy import Boolean, Column, ForeignKey, Integer, String
-from sqlalchemy.orm import relationship
-from typing import List
-from typing import Optional
 from sqlalchemy import ForeignKey
-from sqlalchemy import String
-from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
 from database import Base
@@ -18,5 +13,4 @@ class Product(Base):
     description: Mapped[str] 
     price: Mapped[int] 
     stock_quantity: Mapped[int] 
-    category_id: Mapped[int] = mapped_column(ForeignKey('categories.id'),nullable=True)
-    isbn: Mapped[str]
+    category_id: Mapped[int] = mapped_column(ForeignKey(Category.id),nullable=True)
