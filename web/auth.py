@@ -28,13 +28,10 @@ db_dependency = Annotated[Session , Depends(get_db)]
 
 def authenticate_user(email:str,password:str,db):
     user=db.query(User).filter(User.email==email).first()
-    print(user.email)
-    print(user.password)
     if not user:
-        return false
+        return False
     if not bcrypt_context.verify(password,user.password):
-        return false
-    print('hash if good')
+        return False
     return user
 
 def create_access_token(email:str,user_id:int,role:str, expires_delta: timedelta = timedelta):
