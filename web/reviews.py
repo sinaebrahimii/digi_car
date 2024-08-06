@@ -2,8 +2,8 @@ from fastapi import APIRouter, Depends, HTTPException, Path
 from database import SessionLocal
 from starlette import status
 from sqlalchemy.orm import Session
-from typing import Annotated
-from schemas.reviews import ReviewCreate
+from typing import Annotated,List
+from schemas.reviews import ReviewCreate,ReviewResponse
 from models.reviews import Review
 from .auth import get_current_user
 from datetime import datetime
@@ -23,7 +23,9 @@ user_dependency = Annotated[dict, Depends(get_current_user)]
 router = APIRouter(prefix="/reviews", tags=["reviews"])
 
 
-@router.get("/{product_id}", status_code=status.HTTP_200_OK)
+@router.get("/{product_id}",
+ status_code=status.HTTP_200_OK,
+ response_model=List[ReviewResponse])
 async def get_product_reviews(db: db_dependency, product_id: int = Path(gt=0)):
     reviews = db.query(Review).filter(Review.product_id == product_id).all()
     return reviews
