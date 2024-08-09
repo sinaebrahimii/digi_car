@@ -1,6 +1,5 @@
 from sqlalchemy import ForeignKey
-from sqlalchemy.orm import Mapped
-from sqlalchemy.orm import mapped_column
+from sqlalchemy.orm import Mapped,relationship,mapped_column
 from database import Base
 from models.users import User
 
@@ -11,3 +10,4 @@ class Address(Base):
     postal_code:Mapped[str]
     city:Mapped[str]
     street:Mapped[str]
+    user:Mapped["User"]=relationship(back_populates="addresses")
