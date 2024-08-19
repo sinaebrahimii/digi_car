@@ -27,6 +27,10 @@ def get_db():
 db_dependency = Annotated[Session , Depends(get_db)]
 
 def authenticate_user(email:str,password:str,db):
+    """
+    checks if  user exists in the database and the entered password 
+    is correct.returns user or false 
+    """
     user=db.query(User).filter(User.email==email).first()
     if not user:
         return False
@@ -36,10 +40,15 @@ def authenticate_user(email:str,password:str,db):
 
 def create_access_token(email:str,user_id:int,role:str, expires_delta: timedelta = timedelta):
     expires = datetime.utcnow() + expires_delta
-    encode={"email":email,"id":user_id,"exp":expires}
+    encode={"email":email,"id":user_id,"exp":expires,role:role}
     return jwt.encode(encode,SECRET_KEY,algorithm=ALGORITHM)
 
 async def get_current_user(token: Annotated[str, Depends(oauth2_bearer)]):
+    """
+    Decodes and validates the JWT token to extract user info (id, email, role). 
+    Raises a 401 error if the token is invalid or missing required fields.
+    Returns the user's id, email, and role if valid.
+    """
     try:
         payload=jwt.decode(token,SECRET_KEY,algorithms=[ALGORITHM])
         id=payload.get("id")
@@ -53,7 +62,7 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_bearer)]):
         detail="Could not validate user")
 
 
-@router.post('/',status_code=201)
+@router.post('/',status_code=201,response_model=Token)
 async def create_user(db:db_dependency,user:UserCreateRequest):
     user_model=User(
         email=user.email,
@@ -64,11 +73,13 @@ async def create_user(db:db_dependency,user:UserCreateRequest):
         password=bcrypt_context.hash(user.password),)
     db.add(user_model)
     db.commit()
-    return("user created")
+    token = create_access_token(user_model.email,user_model.id,user_model.role,expires_delta=timedelta(minutes=20))
+    return({"access_token":token,"token_type":"bearer"})
 
 @router.post("/token",response_model=Token)
-async def login_for_access_token(form_data:Annotated[OAuth2PasswordRequestForm,Depends()],
-                                 db:db_dependency):
+async def login_for_access_token(
+form_data:Annotated[OAuth2PasswordRequestForm,Depends()],
+db:db_dependency):
     #uf user and pass is ok returns user or else returns false
     print(form_data.username)
     user= authenticate_user(form_data.username, form_data.password,db)
