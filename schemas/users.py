@@ -1,10 +1,10 @@
 from pydantic import BaseModel,EmailStr,Field,ConfigDict
-from typing import List
+from typing import List,Literal
 
 class UserCreateRequest(BaseModel):
     email:EmailStr
     password:str=Field(min_length=8)
-    role:str|None=None
+    role:Literal["user","admin"]="user"
     first_name:str|None=None
     last_name:str|None=None
     phone_number:str|None=None
