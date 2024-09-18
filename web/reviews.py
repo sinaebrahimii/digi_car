@@ -31,10 +31,11 @@ async def get_product_reviews(db: db_dependency, product_id: int = Path(gt=0)):
     return reviews
 
 
-@router.post("/{product_id}", status_code=status.HTTP_201_CREATED)
-async def create_product_review(user: user_dependency, db: db_dependency,review: ReviewCreate,product_id: int = Path(gt=0)):
+@router.post("/{p_id}", status_code=status.HTTP_201_CREATED)
+async def create_product_review(user: user_dependency, db: db_dependency,review: ReviewCreate,p_id: int = Path(gt=0)):
+    print(user.get("id"))
     review.review_date = datetime.now()
-    review_model = Review(**review.model_dump())
+    review_model = Review(**review.model_dump(),user_id=user.get("id"),product_id=p_id)
     db.add(review_model)
     db.commit()
     return review.model_dump()
