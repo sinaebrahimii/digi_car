@@ -32,7 +32,7 @@ async def get_user(user:user_dependency,db:db_dependency):
 async def create_address(user:user_dependency,db:db_dependency,user_address:UserAddress):
     if user is None:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,detail="Could not authenticate user kioni")
-    user_address_model=Address(**user_address.model_dump())
+    user_address_model=Address(**user_address.model_dump(),user_id=user.get("id"))
     db.add(user_address_model)
     db.commit()
     return user_address.model_dump()
