@@ -1,5 +1,6 @@
 from pydantic import BaseModel,ConfigDict
-
+from schemas.images import PhotoModel
+from typing import List
 class ProductRequest(BaseModel):
     name:str
     description:str="unique product"
@@ -15,6 +16,7 @@ class ProductResponse(BaseModel):
     price:int
     stock_quantity:int
     category_id:int|None=None
+    images:List[PhotoModel]|None=None
 
 class CategoryRequest(BaseModel):
     name:str

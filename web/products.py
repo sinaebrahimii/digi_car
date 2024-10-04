@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from typing import Annotated
 from schemas.products import ProductRequest,ProductResponse
 from models.products import Product
-
+from typing import List
 def get_db():
     db=SessionLocal()
     try:
@@ -17,7 +17,7 @@ db_dependency= Annotated[Session , Depends(get_db)]
 
 router = APIRouter(prefix="/products",tags=["products"])
 
-@router.get("/")
+@router.get("/",response_model=List[ProductResponse])
 async def get_all_products(db:db_dependency):
     products=db.query(Product).all()
     return products
