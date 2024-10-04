@@ -1,7 +1,6 @@
 from fastapi import FastAPI
-import models
 from database import  engine,Base
-from web import products,categories,users,auth,reviews
+from web import products,categories,users,auth,reviews,images
 
 app = FastAPI()
 
@@ -12,3 +11,4 @@ app.include_router(categories.router)
 app.include_router(users.router)
 app.include_router(auth.router)
 app.include_router(reviews.router)
+app.include_router(images.router)
