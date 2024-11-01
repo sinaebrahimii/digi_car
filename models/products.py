@@ -10,6 +10,7 @@ class Product(Base):
     name: Mapped[str] 
     description: Mapped[str] 
     price: Mapped[int] 
-    stock_quantity: Mapped[int] 
+    stock_quantity: Mapped[int]
+    category :Mapped["Category"] = relationship("Category")
     category_id: Mapped[int] = mapped_column(ForeignKey(Category.id),nullable=True)
     images: Mapped[List["Image"]] = relationship(back_populates="product")
